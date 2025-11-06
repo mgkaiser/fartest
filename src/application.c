@@ -44,8 +44,7 @@ APPLICATION_BANK void application_init(wi_application_t __far *application, uint
     //application->desktop = desktop_create(color, character);      
     //application->desktop->application = application;
 
-    //  Setup method pointers
-    printf("Setting up application methods...\n"); getchar();
+    //  Setup method pointers    
     application->run = (void __far *)application_run;   
     application->insert = (void __far *)application_insert; 
     application->postmessage = (void __far *)application_postmessage;
@@ -68,23 +67,22 @@ APPLICATION_BANK void application_init(wi_application_t __far *application, uint
 APPLICATION_BANK void application_done(wi_application_t __far *application)
 {    
     //farfree(application->desktop);
-    //ll_clear(application->eventqueue);
-    //farfree(application->eventqueue);
+    ll_clear(application->eventqueue);
+    farfree(application->eventqueue);
 }
 
 APPLICATION_BANK void application_destroy(wi_application_t __far *application)
 {
-    // Call the destructor
-    printf("Destroying application...\n"); getchar();
+    // Call the destructor    
     application_done(application);
 
-    // Free the memory
-    printf("Freeing application memory...\n"); getchar();
+    // Free the memory    
     farfree(application);
 }
 
 APPLICATION_BANK void application_run(struct wi_application __far *application)
 {
+    // Main application loop
     while (1)
     {
 
@@ -139,7 +137,7 @@ APPLICATION_BANK void application_bringfront(wi_application_t __far *application
 
 APPLICATION_BANK void application_invalidate(struct wi_application __far *application)
 {
-
+    application->postmessage(application, event_create(WM_PAINT, WND_DESKTOP, 0, 0, 0, NULL));
 }
 
 APPLICATION_BANK void application_pollmouse(struct wi_application __far *application)
