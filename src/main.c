@@ -2,41 +2,36 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include "farmalloc.h"
+#include "linkedlist.h"
+#include "event.h"
+#include "application.h"
 #include "main.h"
 
-// This is in bank 2
-DATA_BANK wi_application_t app;
+MAIN_BANK wi_application_t __far* pApp = NULL;
 
 // This is in unbanked memory
 int main (void)
 { 
-  // Creates a pointer to application in bank 2
-  wi_application_t __far* pApp = &app;
+    // Initialize farmalloc with 8 banks of 8KB each
+    farmalloc_init();
+    farmalloc_addbanks(16, 32, 0x2000); 
 
-  // Initialize application structure
-  pApp->x = 42;
-  pApp->run = application_run;
-
-  // Call main_init in bank 1 and pass pointer to application in bank 2
-  main_init(pApp);
+    printf("Starting application...\n"); getchar();
+    main_init();
+    printf("Application ended.\n"); getchar();
+    return 0;
 }  
 
 // This is in bank 1  
-MAIN_BANK void main_init(wi_application_t __far* element)
+MAIN_BANK void main_init()
 {
-  printf("main_init called\n");   
+    printf("Initializing application...\n"); getchar();
+    pApp = application_create(0x61, 0x66);  
 
-  // Call application_run in bank 3 via function pointer  
-  element->run(element);
+    printf("Running application...\n"); getchar(); 
+    pApp->run(pApp);
+
+    printf("Destroying application...\n"); getchar();  
+    application_done(pApp);
 }
-
-// This is in bank 3
-APPLICATION_BANK void application_run(struct wi_application __far *application)
-{
-  // From bank 3 print the value of x from the application structure in bank 2
-  printf("application_run called %u\n", application->x);  
-
-  // SHOULD OUTPUT: application_run called 42       (The value of application->x)
-  // ACTUAL OUTPUT: application_run called 40960    (The address of application->x)
-}
-

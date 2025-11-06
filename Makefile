@@ -21,7 +21,11 @@ LDFLAGS = -m -b cbmreu -Cvbcc -T$(VBCC)/targets/6502-x16/vlinkb.cmd -L$(VBCC)/ta
 #LDFLAGS = -m -b cbmreu -Cvbcc -T$(VBCC)/targets/6502-x16/vlink.cmd -L$(VBCC)/targets/6502-x16/lib $(VBCC)/targets/6502-x16/lib/startup.o -o $(TARGET) -lvc -Mmapfile
 
 # Sources
-C_SRCS  := main.c 
+C_SRCS  := 	main.c\
+			application.c \
+			linkedlist.c \
+			event.c \
+			farmalloc.c 
 ASM_SRCS:= 
 OBJS    := $(C_SRCS:%.c=obj/%.o) $(ASM_SRCS:%.s=obj/%.o)
 
