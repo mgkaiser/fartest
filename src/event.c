@@ -2,6 +2,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include "forwards.h"
 #include "farmalloc.h"
 #include "linkedlist.h"
 #include "event.h"

@@ -3,14 +3,12 @@
 
 #define LINKEDLIST_BANK __bank(2)
 
-typedef struct ll_node ll_node_t
 struct ll_node  {	
 	struct ll_node __far* next;     // Pointer to next node in the list     
 	struct ll_node __far* prev;     // Pointer to previous node in the list
     // Data follows here
 };
 
-typedef struct linkedlist linkedlist_t;
 struct linkedlist {
     ll_node_t __far* head;          // Pointer to first node in the list
     ll_node_t __far* tail;          // Pointer to last node in the list    

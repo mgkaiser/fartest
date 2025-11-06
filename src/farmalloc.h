@@ -1,7 +1,7 @@
 #ifndef _FARMALLOC_H
 #define _FARMALLOC_H
 
-#define FARMALLOC_BANK __bank(1)
+#define FARMALLOC_BANK __bank(4)
 
 typedef struct unpacked_fp {
     uint16_t offset;

@@ -2,14 +2,27 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include "vera.h"
+#include "forwards.h"
 #include "farmalloc.h"
 #include "linkedlist.h"
 #include "event.h"
+#include "bounds.h"
+#include "panel.h"
+#include "desktop.h"
 #include "application.h"
+
+// Public method forwards declarations
+APPLICATION_BANK void application_run(struct wi_application __far *application);
+APPLICATION_BANK void application_insert(wi_application_t __far *application, void __far *childelement);
+APPLICATION_BANK void application_postmessage(wi_application_t __far *application, wi_event_t __far *message);
+APPLICATION_BANK void application_bringfront(wi_application_t __far *application, void __far *childelement);
+APPLICATION_BANK void application_invalidate(struct wi_application __far *application);
 
 // Private method forwards declarations
 APPLICATION_BANK void application_pollmouse(struct wi_application __far *application);
 APPLICATION_BANK void application_pollkb(struct wi_application __far *application);
+APPLICATION_BANK void panel_setapplication_iterator(ll_node_t __far* node, void __far *data);
 
 // Private mouse routines
 APPLICATION_BANK __regsused("a/x/y") void mouse_config() =      \
@@ -27,22 +40,16 @@ APPLICATION_BANK __regsused("a/x")   uint8_t mouse_get() =      \
 
 // Constructor
 APPLICATION_BANK wi_application_t __far *application_create(uint8_t color, uint8_t character)
-{
-    printf("Constructing application...\n"); getchar();
-    wi_application_t __far *new_application = farmalloc(sizeof(wi_application_t));
-    //wi_application_t __far *new_application = &app;
-
-    printf("Initializing application...\n"); getchar();
-    application_init(new_application, color, character);    
-
-    printf("Application constructed.\n"); getchar();
+{    
+    wi_application_t __far *new_application = farmalloc(sizeof(wi_application_t));        
+    application_init(new_application, color, character);        
     return new_application;
 }
 
 APPLICATION_BANK void application_init(wi_application_t __far *application, uint8_t color, uint8_t character)
 {
-    //application->desktop = desktop_create(color, character);      
-    //application->desktop->application = application;
+    application->desktop = desktop_create(color, character);      
+    application->desktop->application = application;
 
     //  Setup method pointers    
     application->run = (void __far *)application_run;   
@@ -86,8 +93,8 @@ APPLICATION_BANK void application_run(struct wi_application __far *application)
     while (1)
     {
 
-        //application_pollmouse(application);
-        //application_pollkb(application);                
+        application_pollmouse(application);
+        application_pollkb(application);                
         
         // Pop a message from the queue
         wi_event_t __far *message = (wi_event_t __far *)ll_get_tail(application->eventqueue);                
@@ -110,7 +117,7 @@ APPLICATION_BANK void application_run(struct wi_application __far *application)
             }
 
             // Pass it to the event handler
-            //application->desktop->doevents(application->desktop, message);
+            application->desktop->doevents(application->desktop, message);
 
             // When done destroy it
             ll_remove(application->eventqueue, message);
@@ -120,19 +127,30 @@ APPLICATION_BANK void application_run(struct wi_application __far *application)
     }
 }
 
-APPLICATION_BANK void application_insert(wi_application_t __far *application, void __far *childelement)
-{
-
+APPLICATION_BANK void panel_setapplication_iterator(ll_node_t __far* node, void __far *data) {
+    wi_panel_t __far *panel = (wi_panel_t __far *)node;    
+    wi_application_t __far *application =  (wi_application_t __far *)data;        
+    panel->application = application;
+    ll_iterate_forward(panel->children, panel_setapplication_iterator, (void __far *)application);  
 }
 
-APPLICATION_BANK void application_postmessage(wi_application_t __far *application, void __far *message)
+APPLICATION_BANK void application_insert(wi_application_t __far *application, void __far *childelement)
+{
+    application->desktop->insert(application->desktop, childelement);
+    ((wi_panel_t __far *)childelement)->application = application;    
+    ll_iterate_forward(((wi_panel_t __far *)childelement)->children, panel_setapplication_iterator, (void __far *)application); 
+}
+
+APPLICATION_BANK void application_postmessage(wi_application_t __far *application, wi_event_t __far *message)
 {
     ll_insert_head(application->eventqueue, (ll_node_t __far*)message);
 }
 
 APPLICATION_BANK void application_bringfront(wi_application_t __far *application, void __far *childelement)
 {
-
+    ll_remove(application->desktop->children, (ll_node_t __far *)childelement);
+    ll_insert_tail(application->desktop->children, (ll_node_t __far *)childelement);    
+    application->postmessage(application, event_create(WM_PAINT, WND_DESKTOP, 0, 0, 0, NULL));
 }
 
 APPLICATION_BANK void application_invalidate(struct wi_application __far *application)

@@ -25,6 +25,8 @@ C_SRCS  := 	main.c\
 			application.c \
 			linkedlist.c \
 			event.c \
+			panel.c \
+			desktop.c \
 			farmalloc.c 
 ASM_SRCS:= 
 OBJS    := $(C_SRCS:%.c=obj/%.o) $(ASM_SRCS:%.s=obj/%.o)

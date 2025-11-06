@@ -22,7 +22,6 @@ enum {
     WM_QUIT         = 0xffff        
 };
 
-typedef struct wi_event wi_event_t;
 struct wi_event {
     //uint8_t node[6];
     ll_node_t node;

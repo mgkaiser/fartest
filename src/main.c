@@ -2,11 +2,15 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include "vera.h"
+#include "forwards.h"
 #include "farmalloc.h"
 #include "linkedlist.h"
 #include "event.h"
+#include "bounds.h"
+#include "panel.h"
+#include "desktop.h"
 #include "application.h"
-#include "main.h"
 
 MAIN_BANK wi_application_t __far* pApp = NULL;
 
