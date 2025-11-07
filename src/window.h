@@ -1,10 +1,10 @@
-#ifndef _DESKTOP_H
-#define _DESKTOP_H
+#ifndef _WINDOW_H
+#define _WINDOW_H
 
-#define DESKTOP_BANK __bank(4)
+#define WINDOW_BANK __bank(4)
 
-struct wi_desktop {
-
+struct wi_window {
+    
     // Properties for the panel object (including inherited properties)
     ll_node_t node;
     struct wi_panel __far *parent;    
@@ -28,12 +28,15 @@ struct wi_desktop {
     bool __far (*lostfocus)(void __far *element);
     bool __far (*click)(void __far *element);
 
-    // Desktop Object
+    // Window object
+    bool draw_border;
+    uint8_t border_color;
+
 };
 
-DESKTOP_BANK wi_desktop_t __far *desktop_create(uint8_t color, uint8_t character);
-DESKTOP_BANK void desktop_init(wi_desktop_t __far *desktop, uint8_t color, uint8_t character);
-DESKTOP_BANK void desktop_done(wi_desktop_t __far *desktop);
-DESKTOP_BANK void desktop_destroy(wi_desktop_t __far *desktop);
+WINDOW_BANK wi_window_t __far *window_create(uint8_t x, uint8_t y, uint8_t h, uint8_t w, uint8_t color, uint8_t character);
+WINDOW_BANK void window_init(wi_window_t __far *window, uint8_t x, uint8_t y, uint8_t h, uint8_t w, uint8_t color, uint8_t character);
+WINDOW_BANK void window_done(wi_window_t __far *window);
+WINDOW_BANK void window_destroy(wi_window_t __far *window);
 
 #endif

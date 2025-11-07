@@ -22,7 +22,6 @@ APPLICATION_BANK void application_invalidate(struct wi_application __far *applic
 // Private method forwards declarations
 APPLICATION_BANK void application_pollmouse(struct wi_application __far *application);
 APPLICATION_BANK void application_pollkb(struct wi_application __far *application);
-APPLICATION_BANK void panel_setapplication_iterator(ll_node_t __far* node, void __far *data);
 
 // Private mouse routines
 APPLICATION_BANK __regsused("a/x/y") void mouse_config() =      \
@@ -52,11 +51,11 @@ APPLICATION_BANK void application_init(wi_application_t __far *application, uint
     application->desktop->application = application;
 
     //  Setup method pointers    
-    application->run = (void __far *)application_run;   
-    application->insert = (void __far *)application_insert; 
-    application->postmessage = (void __far *)application_postmessage;
-    application->bringfront = (void __far *)application_bringfront;
-    application->invalidate = (void __far *)application_invalidate;
+    application->run = application_run;   
+    application->insert = application_insert; 
+    application->postmessage = application_postmessage;
+    application->bringfront = application_bringfront;
+    application->invalidate = application_invalidate;
     application->last_mouse_button = 0;
 
     // Initialize the list
@@ -127,18 +126,21 @@ APPLICATION_BANK void application_run(struct wi_application __far *application)
     }
 }
 
-APPLICATION_BANK void panel_setapplication_iterator(ll_node_t __far* node, void __far *data) {
-    wi_panel_t __far *panel = (wi_panel_t __far *)node;    
-    wi_application_t __far *application =  (wi_application_t __far *)data;        
-    panel->application = application;
-    ll_iterate_forward(panel->children, panel_setapplication_iterator, (void __far *)application);  
-}
-
 APPLICATION_BANK void application_insert(wi_application_t __far *application, void __far *childelement)
 {
+    // Insert into the desktop
     application->desktop->insert(application->desktop, childelement);
+    return;
+
+    // Set the application pointer
     ((wi_panel_t __far *)childelement)->application = application;    
-    ll_iterate_forward(((wi_panel_t __far *)childelement)->children, panel_setapplication_iterator, (void __far *)application); 
+
+    // Set the application pointer on all children too    
+    wi_panel_t __far *node = ll_get_head(((wi_panel_t __far *)childelement)->children);
+    while(node != NULL) {
+        node->application = application;
+        node = ll_next(((wi_panel_t __far *)childelement)->children, node);
+    }     
 }
 
 APPLICATION_BANK void application_postmessage(wi_application_t __far *application, wi_event_t __far *message)

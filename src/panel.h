@@ -7,8 +7,6 @@ struct wi_panel {
 
     // Properties for the panel object (including inherited properties)
     ll_node_t node;
-
-    // Parent - Parent is ALWAYS a panel
     struct wi_panel __far *parent;    
 
     // Panel object

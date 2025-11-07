@@ -10,7 +10,9 @@
 #include "bounds.h"
 #include "panel.h"
 #include "desktop.h"
+#include "window.h"
 #include "application.h"
+#include "window_test1.h"
 
 MAIN_BANK wi_application_t __far* pApp = NULL;
 
@@ -33,6 +35,10 @@ MAIN_BANK void main_init()
 {
     // Create the application
     pApp = application_create(0x61, 0x66);  
+    
+    // Add test window 1    
+    wi_window_test1_t __far *testWindow1 = window_test1_create(30, 12, 14, 20, 0x31, ' ');
+    pApp->insert(pApp, testWindow1);    
 
     // Run the application
     pApp->run(pApp);

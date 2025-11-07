@@ -9,5 +9,6 @@ typedef struct wi_event wi_event_t;
 typedef struct ll_node ll_node_t;
 typedef struct linkedlist linkedlist_t;
 typedef struct wi_panel wi_panel_t;
+typedef struct wi_window wi_window_t;
 
 #endif

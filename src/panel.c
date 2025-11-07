@@ -82,12 +82,6 @@ PANEL_BANK void panel_destroy(wi_panel_t __far *panel)
     farfree(panel);
 }
 
-// Public methods implementation
-PANEL_BANK void panel_draw_iterator(ll_node_t __far* node, void __far *data) {
-  wi_panel_t __far *panel = (wi_panel_t __far *)node;    
-  panel->draw(panel);
-}
-
 PANEL_BANK bool panel_draw(void __far *element)
 {   
     wi_panel_t __far *panel = (wi_panel_t __far *)element;    
@@ -117,8 +111,12 @@ PANEL_BANK bool panel_draw(void __far *element)
         }
     }    
 
-    // Draw all children
-    ll_iterate_forward(panel->children, panel_draw_iterator, NULL);
+    // Draw all children        
+    wi_panel_t __far *node = (wi_panel_t __far *)ll_get_head(((wi_panel_t __far *)element)->children);
+    while (node != NULL) {
+        node->draw(node);
+        node = (wi_panel_t __far *)ll_next(((wi_panel_t __far *)element)->children, node);
+    }     
 
     return false;
 }
@@ -209,12 +207,6 @@ PANEL_BANK bool panel_click(void __far *element)
     return false;
 }   
 
-PANEL_BANK void panel_doevents_iterator(ll_node_t __far* node, void __far *data) {
-    wi_panel_t __far *panel = (wi_panel_t __far *)node;    
-    wi_event_t __far *message =  (wi_event_t __far *)data;
-    panel->doevents(panel, message);
-}
-
 PANEL_BANK void panel_doevents(void __far *element, wi_event_t __far *message)
 {        
     if (message != NULL)
@@ -223,8 +215,12 @@ PANEL_BANK void panel_doevents(void __far *element, wi_event_t __far *message)
         {   
             if (!message->processed)
             {         
-                // Trigger events on all childen first
-                ll_iterate_backward(((wi_panel_t __far *)element)->children, panel_doevents_iterator, (void __far *)message);
+                // Trigger events on all childen first                
+                wi_panel_t __far *node = (wi_panel_t __far *)ll_get_tail(((wi_panel_t __far *)element)->children);
+                while (node != NULL) {                    
+                    node->doevents(node, message);
+                    node = (wi_panel_t __far *)ll_prev(((wi_panel_t __far *)element)->children, node);
+                }                 
 
                 if (!message->processed)
                 {
