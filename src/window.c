@@ -13,7 +13,7 @@
 #include "window.h"
 
 // Public method forwards declarations
-WINDOW_BANK void window_draw(void __far *element);
+WINDOW_BANK bool window_draw(void __far *element);
 
 // Constructor
 WINDOW_BANK wi_window_t __far *window_create(uint8_t x, uint8_t y, uint8_t h, uint8_t w, uint8_t color, uint8_t character)
@@ -31,6 +31,7 @@ WINDOW_BANK void window_init(wi_window_t __far *window, uint8_t x, uint8_t y, ui
     // Then do the overrides
     window->draw_border = true;
     window->border_color = window->color;
+    window->parent_draw = window->draw;
     window->draw = window_draw;
 }
 
@@ -59,7 +60,7 @@ WINDOW_BANK bool window_draw(void __far *element)
     window->getbounds(window, &current_x, &current_y, &current_h, &current_w);
     
     // Do the parent draw first
-    panel_draw(element);
+    window->parent_draw(element)    
     
     // Then draw a frame    
     for (uint8_t y1 = current_y; y1 < current_y + current_h; y1++ )

@@ -31,6 +31,7 @@ struct wi_window {
     // Window object
     bool draw_border;
     uint8_t border_color;
+    bool __far (*parent_draw)(void __far* element);
 
 };
 

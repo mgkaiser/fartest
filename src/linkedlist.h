@@ -44,7 +44,7 @@ LINKEDLIST_BANK ll_node_t __far* ll_get_tail(linkedlist_t __far* list);         
 LINKEDLIST_BANK ll_node_t __far* ll_next(linkedlist_t __far* list, ll_node_t __far* node);                          //  Get the next node after the node specified
 LINKEDLIST_BANK ll_node_t __far* ll_prev(linkedlist_t __far* list, ll_node_t __far* node);                          //  Get the previous node before the node specified
 LINKEDLIST_BANK bool ll_is_empty(linkedlist_t __far* list);                                                         //  Check if the list is empty
-LINKEDLIST_BANK int ll_get_size(linkedlist_t __far* list);                                                          //  Get the number of nodes in the list
+LINKEDLIST_BANK int ll_get_count(linkedlist_t __far* list);                                                          //  Get the number of nodes in the list
 LINKEDLIST_BANK void ll_clear(linkedlist_t __far* list);                                                            //  Free all nodes in the list
 LINKEDLIST_BANK void ll_iterate_forward(linkedlist_t __far* list, void __far (*iterate_node)(ll_node_t __far* node, void __far *data), void __far *data);     //  Iterate over the list forwards
 LINKEDLIST_BANK void ll_iterate_backward(linkedlist_t __far* list, void __far (*iterate_node)(ll_node_t __far* node, void __far *data), void __far *data);    //  Iterate over the list backwards

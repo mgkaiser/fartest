@@ -15,7 +15,7 @@
 uint16_t next_wnd_id = 0x0001;
 
 // Public method forwards declarations
-PANEL_BANK void panel_draw(void __far *element);
+PANEL_BANK bool panel_draw(void __far *element);
 PANEL_BANK void panel_insert(void __far *element, void __far *childelement);
 PANEL_BANK void panel_get_bounds(void __far *element, uint8_t *x, uint8_t *y, uint8_t *h, uint8_t *w);
 PANEL_BANK void panel_doevents(void __far *element, wi_event_t __far *message);
@@ -115,7 +115,7 @@ PANEL_BANK bool panel_draw(void __far *element)
     wi_panel_t __far *node = (wi_panel_t __far *)ll_get_head(((wi_panel_t __far *)element)->children);
     while (node != NULL) {
         node->draw(node);
-        node = (wi_panel_t __far *)ll_next(((wi_panel_t __far *)element)->children, node);
+    node = (wi_panel_t __far *)ll_next(((wi_panel_t __far *)element)->children, (ll_node_t __far*)node);
     }     
 
     return false;
@@ -219,7 +219,7 @@ PANEL_BANK void panel_doevents(void __far *element, wi_event_t __far *message)
                 wi_panel_t __far *node = (wi_panel_t __far *)ll_get_tail(((wi_panel_t __far *)element)->children);
                 while (node != NULL) {                    
                     node->doevents(node, message);
-                    node = (wi_panel_t __far *)ll_prev(((wi_panel_t __far *)element)->children, node);
+                    node = (wi_panel_t __far *)ll_prev(((wi_panel_t __far *)element)->children, (ll_node_t __far*)node);
                 }                 
 
                 if (!message->processed)

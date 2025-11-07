@@ -67,7 +67,7 @@ WINDOW_TEST1_BANK void window_test1_init(wi_window_test1_t __far *window, uint8_
 // Destructor
 WINDOW_TEST1_BANK void window_test1_done(wi_window_test1_t __far *window)
 {
-    window_done((wi_panel_t __far *)window);
+    window_done((wi_window_t __far *)window);
 }
 
 WINDOW_TEST1_BANK void window_test1_destroy(wi_window_test1_t __far *window)

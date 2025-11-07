@@ -95,8 +95,8 @@ APPLICATION_BANK void application_run(struct wi_application __far *application)
         application_pollmouse(application);
         application_pollkb(application);                
         
-        // Pop a message from the queue
-        wi_event_t __far *message = (wi_event_t __far *)ll_get_tail(application->eventqueue);                
+            // Pop a message from the queue
+            wi_event_t __far *message = (wi_event_t __far *)ll_get_tail(application->eventqueue);                
 
         // If we got a message, process it
         if (message != NULL)
@@ -119,7 +119,7 @@ APPLICATION_BANK void application_run(struct wi_application __far *application)
             application->desktop->doevents(application->desktop, message);
 
             // When done destroy it
-            ll_remove(application->eventqueue, message);
+            ll_remove(application->eventqueue, (ll_node_t __far*)message);
             event_destroy(message);
         }
 
@@ -136,10 +136,10 @@ APPLICATION_BANK void application_insert(wi_application_t __far *application, vo
     ((wi_panel_t __far *)childelement)->application = application;    
 
     // Set the application pointer on all children too    
-    wi_panel_t __far *node = ll_get_head(((wi_panel_t __far *)childelement)->children);
+    wi_panel_t __far *node = (wi_panel_t __far *)ll_get_head(((wi_panel_t __far *)childelement)->children);
     while(node != NULL) {
         node->application = application;
-        node = ll_next(((wi_panel_t __far *)childelement)->children, node);
+        node = (wi_panel_t __far *)ll_next(((wi_panel_t __far *)childelement)->children, (ll_node_t __far*)node);
     }     
 }
 
